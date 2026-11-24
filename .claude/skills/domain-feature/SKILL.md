@@ -14,7 +14,7 @@ description: 이 프로젝트(상호대차, Spring Boot 4 + JPA)에 도메인 �
 ```
 com.hyeon.interlibraryloan
 ├── common          공통 엔티티 기반(생성/수정 시각), 예외, 행위자(Actor), 시간(Clock) 설정
-├── library         도서관, 정책, 중단 기간, 코드 테이블
+├── library         도서관, 정책, 중단 기간, 자치구
 ├── book            서지, 소장 자료
 ├── member          계정, 직원, 이용자
 ├── loanrequest     상호대차 요청, 이력, 취소, 배송, 대출
@@ -29,6 +29,8 @@ com.hyeon.interlibraryloan
 | `domain` | 엔티티, 리포지토리 인터페이스, 순수 규칙, 도메인 예외 | 다른 층에 의존하지 않음 |
 | `application` | 서비스, 명령/조회 객체, 트랜잭션 | domain |
 | `api` | 컨트롤러, 요청/응답 DTO | application |
+
+코드 테이블은 그 코드를 쓰는 기능 패키지에 둔다. 자치구는 `library`, 자료 유형은 `book`, 취소 사유는 `loanrequest`에 있다.
 
 의존은 `api → application → domain` 한 방향이다. 다른 기능의 데이터가 필요하면 그 기능의 application 서비스나 domain 타입을 쓰고, 기능 간 순환 의존을 만들지 않는다.
 
@@ -83,7 +85,7 @@ com.hyeon.interlibraryloan
 | 층 | 방식 | 확인할 것 |
 |---|---|---|
 | 도메인 | 순수 JUnit 5 + AssertJ, Spring 없음 | 규칙, 행위 메서드, 경계값 |
-| 리포지토리 | `@DataJpaTest` + Testcontainers Postgres | 직접 작성한 쿼리, CHECK, 부분 유니크, 복합 FK. 단순 저장/조회만 하는 리포지토리는 테스트하지 않는다 |
+| 리포지토리 | `@SpringBootTest` + `@Transactional` + `@Import(TestcontainersConfiguration.class)` | 직접 작성한 쿼리, CHECK, 부분 유니크, 복합 FK. 단순 저장/조회만 하는 리포지토리는 테스트하지 않는다. Boot 4의 `@DataJpaTest` 패키지를 확인한 뒤 슬라이스로 바꿀 수 있다. 예) `LibraryRepositoryTest` |
 | 서비스 | `@SpringBootTest` + Testcontainers | 트랜잭션, 여러 엔티티에 걸친 흐름 |
 | 컨트롤러 | `@WebMvcTest` + 서비스 목(`@MockitoBean`) | 입력 검증, 상태 코드, 응답 JSON 모양, 오류 형식 |
 
