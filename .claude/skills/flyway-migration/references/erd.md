@@ -60,7 +60,8 @@ Spring Batch 메타 테이블은 7단계에서 Flyway로 추가한다.
 
 ### 책
 
-**bib_record**: id bigint PK · isbn13 char(13) UK NN · title varchar(500) NN · volume varchar(20) · volume_title varchar(200) · author varchar(500) · publisher varchar(200) · published_year smallint · kdc varchar(20)
+**bib_record**: id bigint PK · isbn13 varchar(13) UK NN CK(`^97[89][0-9]{10}$`) · title varchar(500) NN · volume varchar(20) · volume_title varchar(200) · author varchar(500) · publisher varchar(200) · published_year smallint (Java `Short`) · kdc varchar(20)
+- isbn13은 노션 ERD의 char(13) 대신 varchar(13) + 형식 CHECK를 쓴다. Hibernate 스키마 검증이 char를 String 매핑과 다른 타입으로 보기 때문이다. 정규화와 검증 숫자 확인은 `Isbn` 값 객체가 한다
 
 **item**: id bigint PK · library_id FK NN · bib_record_id FK NN · source_book_key bigint · barcode varchar(30) NN · call_number varchar(100) · shelf_location varchar(100) · material_type_code FK NN · status varchar(20) NN CK(AVAILABLE, ON_LOAN, RESERVED, LENT_OUT, MISSING, DAMAGED, IN_REPAIR, LOST, WITHDRAWN) · interlibrary_lendable boolean NN · acquired_at date · version bigint NN
 - UK(library_id, barcode), UK(library_id, source_book_key), UK(id, library_id, bib_record_id)
