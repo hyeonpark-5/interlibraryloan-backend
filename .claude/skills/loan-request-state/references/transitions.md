@@ -1,6 +1,19 @@
-# 상호대차 상태 전환표 (2026-11-24 기준)
+# 상호대차 상태 전환표 (2026-11-25 기준)
 
 원본은 사용자의 노션 요구사항 정의서다. 노션이 바뀌면 이 파일도 같이 고친다.
+
+## 0. 코드 위치
+
+| 내용 | 코드 |
+|---|---|
+| 요청 전환표 (2절) | `loanrequest.domain.policy.LoanRequestStateMachine` |
+| 관계 (1절) | `loanrequest.domain.type.ActorRelation` |
+| 자료 전환표 (3절) | `book.domain.policy.ItemStatusTransitions`, 사건 이름은 `book.domain.type.ItemEvent` |
+| 취소 사유 (4절) | `loanrequest.domain.type.CancelReasonCode` (동작), cancel_reason 테이블 (표시 문구) |
+| 진행 중 기준 (5절) | `loanrequest.domain.type.LoanRequestStatus`의 `isPatronActive()`, `isItemActive()` |
+| 이용자 표시 단계 (6절) | `loanrequest.domain.type.PatronStage` |
+
+신청은 `request()`, 취소는 `cancel()`, 대출은 `checkOut()` 전용 메서드를 쓰고, 나머지 행동은 `transit()`을 쓴다.
 
 ## 1. 관계 (행위자가 이 요청에서 어느 쪽인가)
 
@@ -11,8 +24,9 @@
 | BORROWING_LIBRARIAN | 행위자가 사서 또는 도서관 관리자이고 소속 도서관 = 요청관 |
 | LENDING_LIBRARIAN | 행위자가 사서 또는 도서관 관리자이고 소속 도서관 = 제공관 |
 | SYSTEM | 스케줄러, 배치, 컨슈머 |
+| NONE | 위 어디에도 해당하지 않음. 다른 도서관 사서, 시스템 관리자 |
 
-시스템 관리자는 어떤 전환도 할 수 없다 (BR-19).
+시스템 관리자는 어떤 전환도 할 수 없다 (BR-19). 관계는 한 요청에서 한 사람당 하나다.
 
 ## 2. 요청 상태 전환
 

@@ -7,13 +7,11 @@ description: 이 프로젝트(상호대차, Spring Boot 4 + JPA)에 도메인 �
 
 이 프로젝트는 기술 학습이 목적이라, 기능 수보다 **구조가 일관되고 각 층이 제대로 테스트되는 것**이 중요하다. 아래 구조와 규칙은 그 일관성을 지키기 위한 것이다.
 
-## 패키지 구조 (제안)
-
-사용자와 패키지 구조를 확정하면 이 절을 갱신한다. 그 전에는 이 구조를 따르되, 처음 적용할 때 사용자에게 제안 구조라고 알린다.
+## 패키지 구조
 
 ```
 com.hyeon.interlibraryloan
-├── common          공통 엔티티 기반(생성/수정 시각), 예외, 행위자(Actor), 시간(Clock) 설정
+├── common          entity(공통 생성/수정 시각), config, 이후 예외, 행위자(Actor), 시간(Clock)
 ├── library         도서관, 정책, 중단 기간, 자치구
 ├── book            서지, 소장 자료
 ├── member          계정, 직원, 이용자
@@ -29,6 +27,19 @@ com.hyeon.interlibraryloan
 | `domain` | 엔티티, 리포지토리 인터페이스, 순수 규칙, 도메인 예외 | 다른 층에 의존하지 않음 |
 | `application` | 서비스, 명령/조회 객체, 트랜잭션 | domain |
 | `api` | 컨트롤러, 요청/응답 DTO | application |
+
+`domain` 안은 종류별 하위 패키지로 나눈다. 새 클래스는 반드시 이 중 하나에 넣는다.
+
+| 하위 패키지 | 담는 것 | 예시 |
+|---|---|---|
+| `entity` | JPA 엔티티 | `book.domain.entity.Item` |
+| `repository` | Spring Data 리포지토리 | `book.domain.repository.ItemRepository` |
+| `type` | enum. `enum`은 자바 예약어라 패키지 이름으로 못 쓴다 | `loanrequest.domain.type.LoanRequestStatus` |
+| `vo` | 값 객체(record) | `book.domain.vo.Isbn` |
+| `exception` | 도메인 예외 | `book.domain.exception.ItemTransitionException` |
+| `policy` | Spring과 엔티티에 의존하지 않는 순수 규칙, 전환표 | `loanrequest.domain.policy.LoanRequestStateMachine` |
+
+테스트도 같은 패키지에 둔다. 테스트 픽스처는 `{기능}.domain.fixture`에 둔다. 예) `book.domain.fixture.BookFixtures`
 
 코드 테이블은 그 코드를 쓰는 기능 패키지에 둔다. 자치구는 `library`, 자료 유형은 `book`, 취소 사유는 `loanrequest`에 있다.
 

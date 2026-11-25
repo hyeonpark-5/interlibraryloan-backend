@@ -15,16 +15,19 @@ description: 상호대차 요청(loan_request)이나 소장 자료(item)의 상�
 - **요청관과 제공관은 역할이 아니라 관계다.** 같은 사서가 어떤 요청에서는 요청관, 다른 요청에서는 제공관이다. 행위자와 요청을 보고 관계를 계산한 뒤, 전환표의 허용 관계와 비교한다. 가족 여부처럼 DB 조회가 필요한 관계는 애플리케이션 계층에서 계산해 넘긴다.
 - **"진행 중"의 두 기준은 코드 한 곳에서만 정의한다.** 이용자 기준(중복 신청, 동시 진행 한도)과 자료 기준(자료 배정)은 다르다. 같은 목록이 마이그레이션의 부분 유니크 인덱스에도 있으므로 둘이 항상 같아야 한다.
 
-## 코드 위치 (제안 구조)
+## 코드 위치
 
-패키지 구조가 확정되면 이 절을 갱신한다.
+패키지 접두어 `com.hyeon.interlibraryloan`은 생략했다. 세부 파일은 `references/transitions.md` 0절에 있다.
 
 | 요소 | 위치 |
 |---|---|
-| `LoanRequestStatus`, `LoanRequestAction`, 관계 enum, 전환표 | `com.hyeon.interlibraryloan.loanrequest.domain` |
-| 요청 엔티티 `LoanRequest`와 행위 메서드 (ship, cancel, arrive 등) | 같은 패키지 |
-| 관계 계산, 트랜잭션, 자료 상태 변경 조율 | `com.hyeon.interlibraryloan.loanrequest.application` |
-| 소장 자료 `Item`과 자료 상태 전환 | `com.hyeon.interlibraryloan.book.domain` |
+| 상태, 행동, 관계, 취소 사유, 이용자 표시 단계 enum | `loanrequest.domain.type` |
+| 요청 전환표 `LoanRequestStateMachine` | `loanrequest.domain.policy` |
+| 거부 예외 `LoanRequestTransitionException` | `loanrequest.domain.exception` |
+| 요청 엔티티 `LoanRequest`와 행위 메서드 (6단계에서 추가) | `loanrequest.domain.entity` |
+| 관계 계산, 트랜잭션, 자료 상태 변경 조율 (6단계에서 추가) | `loanrequest.application` |
+| 소장 자료 `Item`과 행위 메서드 | `book.domain.entity` |
+| 자료 전환표 `ItemStatusTransitions` | `book.domain.policy` |
 
 ## 전환을 추가하거나 바꾸는 절차
 
