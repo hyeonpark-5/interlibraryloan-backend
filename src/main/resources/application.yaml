@@ -5,3 +5,11 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+
+# 합성 데이터 설정. seed 프로필로 실행할 때 쓴다.
+seed:
+  random-seed: 20261125
+  reference-date: 2026-11-25
+  patrons-per-library: 30
+  librarians-per-library: 2
+  suspended-ratio: 0.05

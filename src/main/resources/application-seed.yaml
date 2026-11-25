@@ -1,0 +1,5 @@
+# 합성 데이터만 넣고 끝나도록 웹 서버를 띄우지 않는다.
+# 실행: local 프로필과 함께 켠다. 예) --spring.profiles.active=local,seed
+spring:
+  main:
+    web-application-type: none

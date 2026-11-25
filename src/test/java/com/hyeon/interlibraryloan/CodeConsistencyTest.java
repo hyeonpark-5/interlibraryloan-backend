@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hyeon.interlibraryloan.book.domain.type.ItemStatus;
 import com.hyeon.interlibraryloan.loanrequest.domain.type.CancelReasonCode;
+import com.hyeon.interlibraryloan.member.domain.type.PatronStatus;
+import com.hyeon.interlibraryloan.member.domain.type.UserRole;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +51,28 @@ class CodeConsistencyTest {
 	void itemStatusCheck() {
 		assertThat(checkConstraintValues("ck_item_status"))
 				.isEqualTo(Arrays.stream(ItemStatus.values()).map(Enum::name).collect(Collectors.toSet()));
+	}
+
+	@Test
+	@DisplayName("app_user 테이블의 역할 CHECK 제약과 UserRole enum의 값 목록이 같다")
+	void userRoleCheck() {
+		assertThat(checkConstraintValues("ck_app_user_role"))
+				.isEqualTo(Arrays.stream(UserRole.values()).map(Enum::name).collect(Collectors.toSet()));
+	}
+
+	@Test
+	@DisplayName("staff 테이블의 역할 CHECK 제약은 UserRole 중 직원 역할과 같다")
+	void staffRoleCheck() {
+		assertThat(checkConstraintValues("ck_staff_role"))
+				.isEqualTo(Arrays.stream(UserRole.values()).filter(UserRole::isStaff).map(Enum::name)
+						.collect(Collectors.toSet()));
+	}
+
+	@Test
+	@DisplayName("patron 테이블의 상태 CHECK 제약과 PatronStatus enum의 값 목록이 같다")
+	void patronStatusCheck() {
+		assertThat(checkConstraintValues("ck_patron_status"))
+				.isEqualTo(Arrays.stream(PatronStatus.values()).map(Enum::name).collect(Collectors.toSet()));
 	}
 
 	/** pg_get_constraintdef 결과에서 'VALUE'::character varying 형태의 값을 뽑는다. */
