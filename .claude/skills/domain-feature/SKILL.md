@@ -11,14 +11,17 @@ description: 이 프로젝트(상호대차, Spring Boot 4 + JPA)에 도메인 �
 
 ```
 com.hyeon.interlibraryloan
-├── common          entity(공통 생성/수정 시각), config, 이후 예외, 행위자(Actor), 시간(Clock)
+├── common          entity(공통 생성/수정 시각), config, type(ActorType), vo(Actor), 이후 예외, 시간(Clock)
 ├── library         도서관, 정책, 중단 기간, 자치구
 ├── book            서지, 소장 자료
 ├── member          계정, 직원, 이용자
 ├── loanrequest     상호대차 요청, 이력, 취소, 배송, 대출
 ├── family          가족 그룹, 구성원, 초대
-└── notification    알림 (3단계)
+├── notification    알림
+└── seed            합성 데이터. config(설정), generator(순수 생성 규칙), application(DB에 넣기, seed 프로필 실행)
 ```
+
+합성 데이터는 `seed` 프로필로만 넣는다. 테스트는 합성 데이터에 기대지 않고 픽스처로 필요한 만큼만 만든다.
 
 기능 패키지 안은 세 층으로 나눈다.
 

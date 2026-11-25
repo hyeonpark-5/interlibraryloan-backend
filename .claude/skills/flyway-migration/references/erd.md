@@ -51,8 +51,8 @@ Spring Batch 메타 테이블은 7단계에서 Flyway로 추가한다.
 **app_user**: id bigint PK · login_id varchar(50) UK NN · password_hash varchar(100) (8단계 전 null 허용) · role varchar(20) NN CK(PATRON, LIBRARIAN, LIBRARY_MANAGER, SYSTEM_ADMIN) · enabled boolean NN · UK(id, role)
 
 **staff**: user_id bigint PK · role varchar(20) NN CK(<> PATRON) · name varchar(50) NN · library_id FK
-- 복합 FK (user_id, role) → app_user(id, role)
-- CK: role = SYSTEM_ADMIN 이 아니면 library_id not null
+- 복합 FK (user_id, role) → app_user(id, role) on update cascade. 계정 역할이 바뀌면 직원 역할도 따라 바뀌고, 이용자 역할로는 바뀌지 못한다(ck_staff_role)
+- CK: 시스템 관리자는 library_id가 반드시 null, 그 외 역할은 반드시 not null (노션 ERD보다 엄격)
 
 **patron**: id bigint PK · library_id FK NN · card_number varchar(30) NN · name varchar(50) NN · email varchar(100) · phone varchar(20) · birth_date date · status varchar(20) NN CK(ACTIVE, SUSPENDED, WITHDRAWN) · suspended_until date · app_user_id FK UK · UK(library_id, card_number)
 
